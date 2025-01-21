@@ -1,11 +1,11 @@
 import requests
+from .config import COINMAKERCAP_TOKEN
 
 COINMARKETCAP_API_URL = 'https://pro-api.coinmarketcap.com/v1/'
-API_KEY = '32c0bf9f-0d6e-42b8-8d24-6cfee67e77e6'
 
 def fetch_cryptocurrencies(symbol: str = None, limit: int = 100):
     headers = {
-        'X-CMC_PRO_API_KEY': API_KEY
+        'X-CMC_PRO_API_KEY': COINMAKERCAP_TOKEN
     }
     params = {
         'limit': limit
