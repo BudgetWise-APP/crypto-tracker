@@ -27,7 +27,7 @@ async def unlink_platform(user_id: str, platform: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@integrations_router.get('api/v1/integrations')
+@integrations_router.get('/integrations')
 async def get_platforms(user_id: str):
     try:
         integrations = await IntegrationsService.get_platforms(user_id)
