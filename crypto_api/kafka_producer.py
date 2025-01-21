@@ -1,9 +1,10 @@
 from confluent_kafka import Producer
-from crypto_api.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC
+from common.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC
 import json
 
 producer_config = {'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS}
 producer = Producer(producer_config)
+
 
 def send_message(key, value):
     try:

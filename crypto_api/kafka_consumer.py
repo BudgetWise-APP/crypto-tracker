@@ -1,14 +1,15 @@
 from confluent_kafka import Consumer, KafkaException
-from crypto_api.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC, CONSUMER_GROUP
+from common.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC, CONSUMER_GROUP
 
 consumer_config = {
     'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
     'group.id': CONSUMER_GROUP,
-    'auto.offset.reset': 'earliest'
+    'auto.offset.reset': 'earliest',
 }
 
 consumer = Consumer(consumer_config)
 consumer.subscribe([KAFKA_TOPIC])
+
 
 def consume_messages():
     try:
