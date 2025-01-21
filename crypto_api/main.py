@@ -1,32 +1,51 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import Depends, HTTPException, APIRouter
 from common.mongo_client import db
 from crypto_api.models import CryptoCurrencyModel
 from crypto_api.services import fetch_cryptocurrencies
 from crypto_api.kafka_producer import send_message
-from crypto_api.kafka_consumer import consume_messages
-import threading
+from fastapi.security import OAuth2PasswordBearer
+from common.config import JWT_SECRET, ALGORITHM
+from jose import jwt, JWTError
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 crypto_api_router = APIRouter()
+
+
+def get_email_from_jwt(token: str):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+        email: str = payload.get("email")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Email not found in token")
+        return email
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 @crypto_api_router.get('/crypto-api/coinmarketcap')
 async def get_cryptocurrencies(symbol: str = None, limit: int = 100):
     try:
         coins = fetch_cryptocurrencies(symbol=symbol, limit=limit)
-        send_message('coins', coins)
         return coins
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @crypto_api_router.post('/crypto-api/cryptocurrencies')
-async def create_cryptocurrency(crypto: CryptoCurrencyModel):
-    print(crypto)
+async def create_cryptocurrency(
+    crypto: CryptoCurrencyModel, token: str = Depends(oauth2_scheme)
+):
+    user_email = get_email_from_jwt(token)
     existing = await db.crypto_currency.find_one({'coin_id': crypto.coin_id})
     if existing:
         raise HTTPException(status_code=400, detail='Cryptocurrency already exists')
     result = await db.crypto_currency.insert_one(crypto.model_dump(by_alias=True))
     crypto.id = result.inserted_id
+    if user_email:
+        send_message(
+            {"message": f"{crypto.symbol}-{crypto.name}", user_email: user_email}
+        )
     return crypto
 
 
@@ -57,12 +76,3 @@ async def get_cryptocurrencies_from_db(limit: int = 100):
         return coins
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-def start_kafka_consumer():
-    consumer_thread = threading.Thread(target=consume_messages)
-    consumer_thread.start()
-
-
-if __name__ == '__main__':
-    start_kafka_consumer()
