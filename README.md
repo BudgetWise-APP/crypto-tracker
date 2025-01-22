@@ -1,4 +1,5 @@
-<img width="701" alt="изображение" src="https://github.com/user-attachments/assets/bd563aec-f428-4a50-bec2-fb33a8a5aeea" />
+<img width="708" alt="изображение" src="https://github.com/user-attachments/assets/2f83b18e-c2d1-4712-87ba-56954ea1f83c" />
+
 
 
 Run server: uvicorn main:app --reload
