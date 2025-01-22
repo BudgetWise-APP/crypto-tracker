@@ -40,11 +40,14 @@ async def create_cryptocurrency(
     existing = await db.crypto_currency.find_one({'coin_id': crypto.coin_id})
     if existing:
         raise HTTPException(status_code=400, detail='Cryptocurrency already exists')
-    result = await db.crypto_currency.insert_one(crypto.model_dump(by_alias=True))
-    crypto.id = result.inserted_id
+    await db.crypto_currency.insert_one(crypto.model_dump(by_alias=True))
     if user_email:
         send_message(
-            {"message": f"{crypto.symbol}-{crypto.name}", user_email: user_email}
+            key="new_coin_added",
+            value={
+                "user_email": user_email,
+                "message": f"{crypto.symbol}-{crypto.name}",
+            },
         )
     return crypto
 

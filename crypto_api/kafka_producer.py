@@ -22,7 +22,7 @@ def send_message(key, value):
         serialized_value = json.dumps(value)
         producer.produce(
             KAFKA_TOPIC,
-            key=key,
+            key=json.dumps(key).encode('utf-8'),
             value=serialized_value.encode('utf-8'),
             callback=delivery_report,
         )
