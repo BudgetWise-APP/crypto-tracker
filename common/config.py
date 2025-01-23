@@ -10,6 +10,8 @@ MONGO_URI = os.getenv('MONGO_URI')
 COINMAKERCAP_TOKEN = os.getenv('COINMAKERCAP_TOKEN')
 JWT_SECRET = os.getenv('JWT_SECRET')
 ALGORITHM = "HS256"
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
 ORIGINS = [
     'http://localhost:8899',
     'http://10.0.11.165:8899',
