@@ -37,13 +37,16 @@ class IntegrationsService:
                     'secret_key': secret_key,
                 }
             )
+        return {"message": "Platform linked successfully"}
 
     @staticmethod
     async def unlink_platform(user_id: str, platform: str):
         await db.integrations.delete_one(
             {'user_id': ObjectId(user_id), 'platform': platform}
         )
+        return {"message": "Platform unlinked successfully"}
 
     @staticmethod
     async def get_platforms(user_id: str):
-        return await db.integrations.find({'user_id': ObjectId(user_id)}).to_list(None)
+        integrations = await db.integrations.find( {"user_id": ObjectId(user_id)}, {"_id": 0, "user_id": 0}).to_list(length=10)
+        return integrations

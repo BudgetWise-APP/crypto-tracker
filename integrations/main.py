@@ -36,6 +36,7 @@ async def get_platforms(token: str = Depends(oauth2_scheme)):
     try:
         user_id = IntegrationsService.get_user_id_from_jwt(token)
         integrations = await IntegrationsService.get_platforms(user_id)
+        print(integrations)
         return {"integrations": integrations}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
