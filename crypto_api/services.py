@@ -75,6 +75,10 @@ class CryptoApiService:
     @staticmethod
     async def get_cryptocurrencies_from_db(limit: int):
         saved_crypto = await db.crypto_currency.find().to_list(limit)
+        if not saved_crypto:
+            return []
+        
+        coin_ids = [str(crypto['coin_id']) for crypto in saved_crypto]
         coin_symbols = [crypto['symbol'] for crypto in saved_crypto]
         params = {'symbol': ",".join(coin_symbols), 'limit': limit}
         coins = await CryptoApiService.fetch_cryptocurrencies(**params)
@@ -82,4 +86,8 @@ class CryptoApiService:
             raise HTTPException(
                 status_code=500, detail="Unexpected response from CoinMarketCap API"
             )
-        return coins
+        filtered_coins = [coin for coin in coins  if str(coin.get('coin_id')) in coin_ids]
+
+        if not filtered_coins:
+            return []
+        return filtered_coins

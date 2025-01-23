@@ -49,7 +49,7 @@ async def delete_cryptocurrency(coin_id: int):
 @crypto_api_router.get('/crypto-api/cryptocurrencies')
 async def get_cryptocurrencies_from_db(limit: int = 100):
     try:
-        coins = await CryptoApiService.get_cryptocurrencies(limit)
+        coins = await CryptoApiService.get_cryptocurrencies_from_db(limit)
 
         send_message('user_coins', coins)
         return coins
