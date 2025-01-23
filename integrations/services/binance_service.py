@@ -44,7 +44,7 @@ class BinanceService:
             for asset in account_info.get("balances", [])
         )
 
-        return total_in_usd
+        return round(total_in_usd, 2)
 
     @staticmethod
     async def get_binance_data(user_id: str):
