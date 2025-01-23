@@ -38,7 +38,7 @@ class CryptoApiService:
     @staticmethod
     async def fetch_cryptocurrencies(symbol: str = None, limit: int = 100):
         redis_key = f'cryptocurrencies_{symbol}_{limit}'
-        data = CryptoApiService.get_data_from_redis(redis_key)
+        data = await CryptoApiService.get_data_from_redis(redis_key)
         if data:
             return data
         data = await CryptoApiService.fetch_data_from_coinmaketcap(symbol, limit)
