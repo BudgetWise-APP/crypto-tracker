@@ -15,7 +15,7 @@ class BinanceService:
         binance_credentials = await BinanceService.get_binance_data(user_id)
 
         if not binance_credentials:
-            return {"message", "No Binance credentials found"}
+            return {"message": "No Binance credentials found"}
 
         endpoint = "/api/v3/account"
         timestamp = int(time.time() * 1000)

@@ -1,8 +1,22 @@
 from common.mongo_client import db
 from bson import ObjectId
+from fastapi import HTTPException
+from jose import jwt, JWTError
+from common.config import JWT_SECRET, ALGORITHM
 
 
 class IntegrationsService:
+    @staticmethod
+    def get_user_id_from_jwt(token: str):
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+            user_id: str = payload.get("userId")
+            if user_id is None:
+                raise HTTPException(status_code=401, detail="UserID not found in token")
+            return user_id
+        except JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
     @staticmethod
     async def link_platform(user_id: str, platform: str, api_key: str, secret_key: str):
         existing = await db.integrations.find_one(
