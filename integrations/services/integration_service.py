@@ -16,7 +16,7 @@ class IntegrationsService:
             return user_id
         except JWTError:
             raise HTTPException(status_code=401, detail="Invalid token")
-        
+
     @staticmethod
     async def link_platform(user_id: str, platform: str, api_key: str, secret_key: str):
         existing = await db.integrations.find_one(
