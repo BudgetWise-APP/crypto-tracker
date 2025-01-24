@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, APIRouter
-from common import get_current_user
+from common.get_current_user import get_current_user
 from crypto_api.models import CryptoCurrencyModel
 from crypto_api.services import CryptoApiService
 from crypto_api.kafka_producer import send_message

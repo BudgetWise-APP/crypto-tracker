@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, APIRouter
 
-from common import get_current_user
+from common.get_current_user import get_current_user
 from .services.integration_service import IntegrationsService
 from .services.binance_service import BinanceService
 from .services.bybit_service import BybitService
