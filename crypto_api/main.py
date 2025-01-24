@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, APIRouter
+from common import get_current_user
 from crypto_api.models import CryptoCurrencyModel
 from crypto_api.services import CryptoApiService
 from crypto_api.kafka_producer import send_message
@@ -23,9 +24,9 @@ async def get_cryptocurrencies(symbol: str = None, limit: int = 100):
 
 @crypto_api_router.post('/crypto-api/cryptocurrencies')
 async def create_cryptocurrency(
-    crypto: CryptoCurrencyModel, token: str = Depends(oauth2_scheme)
+    crypto: CryptoCurrencyModel,
+    user_email: str = Depends(get_current_user("email")),
 ):
-    user_email = CryptoApiService.get_email_from_jwt(token)
     created_crypto = await CryptoApiService.add_cryptocurrency(crypto)
     if user_email:
         send_message(

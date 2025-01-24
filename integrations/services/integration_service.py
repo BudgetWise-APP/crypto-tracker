@@ -48,5 +48,7 @@ class IntegrationsService:
 
     @staticmethod
     async def get_platforms(user_id: str):
-        integrations = await db.integrations.find( {"user_id": ObjectId(user_id)}, {"_id": 0, "user_id": 0}).to_list(length=10)
+        integrations = await db.integrations.find(
+            {"user_id": ObjectId(user_id)}, {"_id": 0, "user_id": 0}
+        ).to_list(length=10)
         return integrations

@@ -1,4 +1,6 @@
 from fastapi import Depends, HTTPException, APIRouter
+
+from common import get_current_user
 from .services.integration_service import IntegrationsService
 from .services.binance_service import BinanceService
 from .services.bybit_service import BybitService
@@ -10,9 +12,11 @@ integrations_router = APIRouter()
 
 
 @integrations_router.post('/integrations/link-platform')
-async def link_platform(data: LinkPlatformRequest, token: str = Depends(oauth2_scheme)):
+async def link_platform(
+    data: LinkPlatformRequest,
+    user_id: str = Depends(get_current_user("user_id")),
+):
     try:
-        user_id = IntegrationsService.get_user_id_from_jwt(token)
         await IntegrationsService.link_platform(
             user_id, data.platform, data.api_key, data.secret_key
         )
@@ -22,9 +26,10 @@ async def link_platform(data: LinkPlatformRequest, token: str = Depends(oauth2_s
 
 
 @integrations_router.delete('/integrations/unlink-platform/{platform}')
-async def unlink_platform(platform: str, token: str = Depends(oauth2_scheme)):
+async def unlink_platform(
+    platform: str, user_id: str = Depends(get_current_user("user_id"))
+):
     try:
-        user_id = IntegrationsService.get_user_id_from_jwt(token)
         await IntegrationsService.unlink_platform(user_id, platform)
         return {"message": "Platform unlinked successfully"}
     except Exception as e:
@@ -32,9 +37,8 @@ async def unlink_platform(platform: str, token: str = Depends(oauth2_scheme)):
 
 
 @integrations_router.get('/integrations')
-async def get_platforms(token: str = Depends(oauth2_scheme)):
+async def get_platforms(user_id: str = Depends(get_current_user("user_id"))):
     try:
-        user_id = IntegrationsService.get_user_id_from_jwt(token)
         integrations = await IntegrationsService.get_platforms(user_id)
         print(integrations)
         return {"integrations": integrations}
@@ -43,9 +47,8 @@ async def get_platforms(token: str = Depends(oauth2_scheme)):
 
 
 @integrations_router.get('/binance/account')
-async def get_binance_account(token: str = Depends(oauth2_scheme)):
+async def get_binance_account(user_id: str = Depends(get_current_user("user_id"))):
     try:
-        user_id = IntegrationsService.get_user_id_from_jwt(token)
         total_balance = await BinanceService.get_total_balance_in_usd(user_id)
         return {"total_balance": total_balance}
     except Exception as e:
@@ -53,9 +56,8 @@ async def get_binance_account(token: str = Depends(oauth2_scheme)):
 
 
 @integrations_router.get('/bybit/account')
-async def get_bybit_account(token: str = Depends(oauth2_scheme)):
+async def get_bybit_account(user_id: str = Depends(get_current_user("user_id"))):
     try:
-        user_id = IntegrationsService.get_user_id_from_jwt(token)
         total_balance = await BybitService.get_account_info(user_id)
         return {"total_balance": total_balance}
     except Exception as e:
