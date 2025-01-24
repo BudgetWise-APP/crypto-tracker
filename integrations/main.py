@@ -14,7 +14,7 @@ integrations_router = APIRouter()
 @integrations_router.post('/integrations/link-platform')
 async def link_platform(
     data: LinkPlatformRequest,
-    user_id: str = Depends(get_current_user("user_id")),
+    user_id: str = Depends(get_current_user("userId")),
 ):
     try:
         await IntegrationsService.link_platform(
@@ -27,7 +27,7 @@ async def link_platform(
 
 @integrations_router.delete('/integrations/unlink-platform/{platform}')
 async def unlink_platform(
-    platform: str, user_id: str = Depends(get_current_user("user_id"))
+    platform: str, user_id: str = Depends(get_current_user("userId"))
 ):
     try:
         await IntegrationsService.unlink_platform(user_id, platform)
@@ -37,7 +37,7 @@ async def unlink_platform(
 
 
 @integrations_router.get('/integrations')
-async def get_platforms(user_id: str = Depends(get_current_user("user_id"))):
+async def get_platforms(user_id: str = Depends(get_current_user("userId"))):
     try:
         integrations = await IntegrationsService.get_platforms(user_id)
         print(integrations)
@@ -47,7 +47,7 @@ async def get_platforms(user_id: str = Depends(get_current_user("user_id"))):
 
 
 @integrations_router.get('/binance/account')
-async def get_binance_account(user_id: str = Depends(get_current_user("user_id"))):
+async def get_binance_account(user_id: str = Depends(get_current_user("userId"))):
     try:
         total_balance = await BinanceService.get_total_balance_in_usd(user_id)
         return {"total_balance": total_balance}
@@ -56,7 +56,7 @@ async def get_binance_account(user_id: str = Depends(get_current_user("user_id")
 
 
 @integrations_router.get('/bybit/account')
-async def get_bybit_account(user_id: str = Depends(get_current_user("user_id"))):
+async def get_bybit_account(user_id: str = Depends(get_current_user("userId"))):
     try:
         total_balance = await BybitService.get_account_info(user_id)
         return {"total_balance": total_balance}
