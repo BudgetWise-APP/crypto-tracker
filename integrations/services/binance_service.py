@@ -5,6 +5,8 @@ from bson import ObjectId
 import httpx
 from urllib.parse import urlencode
 from common.mongo_client import db
+from common.redis_service import CacheService
+from integrations.services.integration_service import IntegrationsService
 
 
 class BinanceService:
@@ -12,6 +14,11 @@ class BinanceService:
 
     @staticmethod
     async def get_account_info(user_id: str) -> dict:
+        redis_key = f'integrations_binance_account_{user_id}'
+        data = await CacheService.get_data_from_redis(redis_key)
+        if data:
+            return data
+        
         binance_credentials = await BinanceService.get_binance_data(user_id)
 
         if not binance_credentials:
@@ -32,6 +39,7 @@ class BinanceService:
                 headers=headers,
             )
             response.raise_for_status()
+            CacheService.set_data_to_redis(redis_key, response.json(), ttl=1200)
             return response.json()
 
     @staticmethod

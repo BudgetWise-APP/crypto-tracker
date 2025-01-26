@@ -3,22 +3,14 @@ import json
 from jose import jwt, JWTError
 from fastapi import HTTPException
 from common.config import COINMAKERCAP_TOKEN, JWT_SECRET, ALGORITHM
-from common.redis_client import redis_client
 from common.mongo_client import db
+from common.redis_service import CacheService
 from crypto_api.models import CryptoCurrencyModel
 
 COINMARKETCAP_API_URL = 'https://pro-api.coinmarketcap.com/v1/'
 
 
 class CryptoApiService:
-    @staticmethod
-    async def get_data_from_redis(redis_key: str):
-        cached_data = redis_client.get(redis_key)
-        if cached_data:
-            print('Data fetched from Redis')
-            return json.loads(cached_data)
-        return None
-
     @staticmethod
     async def fetch_data_from_coinmaketcap(symbol: str = None, limit: int = 100):
         headers = {'X-CMC_PRO_API_KEY': COINMAKERCAP_TOKEN}
@@ -38,11 +30,11 @@ class CryptoApiService:
     @staticmethod
     async def fetch_cryptocurrencies(symbol: str = None, limit: int = 100):
         redis_key = f'cryptocurrencies_{symbol}_{limit}'
-        data = await CryptoApiService.get_data_from_redis(redis_key)
+        data = await CacheService.get_data_from_redis(redis_key)
         if data:
             return data
         data = await CryptoApiService.fetch_data_from_coinmaketcap(symbol, limit)
-        redis_client.set(redis_key, json.dumps(data), ex=3600)
+        CacheService.set_data_to_redis(redis_key, json.dumps(data), ex=3600)
         print(f"Data saved to Redis for key: {redis_key}")
         return data
 

@@ -4,6 +4,7 @@ import hashlib
 from bson import ObjectId
 import httpx
 from common.mongo_client import db
+from common.redis_service import CacheService
 
 
 class BybitService:
@@ -11,6 +12,11 @@ class BybitService:
 
     @staticmethod
     async def get_account_info(user_id: str) -> dict:
+        redis_key = f'integrations_bybit_account_{user_id}'
+        data = await CacheService.get_data_from_redis(redis_key)
+        if data:
+            return data
+        
         bybit_credentials = await BybitService.get_bybit_data(user_id)
 
         if not bybit_credentials:
@@ -48,6 +54,7 @@ class BybitService:
             if total_wallet_balance:
                 total_wallet_balance = round(float(total_wallet_balance), 2)
 
+            CacheService.set_data_to_redis(redis_key, total_wallet_balance, ttl=1200)
             return total_wallet_balance
 
     @staticmethod

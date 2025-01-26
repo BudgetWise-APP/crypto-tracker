@@ -52,3 +52,4 @@ class IntegrationsService:
             {"user_id": ObjectId(user_id)}, {"_id": 0, "user_id": 0}
         ).to_list(length=10)
         return integrations
+    
