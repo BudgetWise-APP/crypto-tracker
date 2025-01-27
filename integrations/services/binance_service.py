@@ -13,12 +13,7 @@ class BinanceService:
     BASE_URL = 'https://api.binance.com'
 
     @staticmethod
-    async def get_account_info(user_id: str) -> dict:
-        redis_key = f'integrations_binance_account_{user_id}'
-        data = await CacheService.get_data_from_redis(redis_key)
-        if data:
-            return data
-        
+    async def get_account_info(user_id: str) -> dict:        
         binance_credentials = await BinanceService.get_binance_data(user_id)
 
         if not binance_credentials:
@@ -39,11 +34,15 @@ class BinanceService:
                 headers=headers,
             )
             response.raise_for_status()
-            await CacheService.set_data_to_redis(redis_key, response.json(), ttl=1200)
             return response.json()
 
     @staticmethod
     async def get_total_balance_in_usd(user_id: str) -> float:
+        redis_key = f'integrations_binance_account_{user_id}'
+        data = await CacheService.get_data_from_redis(redis_key)
+        if data:
+            return data
+        
         account_info = await BinanceService.get_account_info(user_id)
         prices = await BinanceService.get_prices()
 
@@ -52,7 +51,10 @@ class BinanceService:
             for asset in account_info.get("balances", [])
         )
 
-        return round(total_in_usd, 2)
+        rounded_total = round(total_in_usd, 2)
+        await CacheService.set_data_to_redis(redis_key, rounded_total, ttl=1200)
+
+        return rounded_total
 
     @staticmethod
     async def get_binance_data(user_id: str):
