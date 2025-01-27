@@ -1,5 +1,4 @@
 import requests
-import json
 from jose import jwt, JWTError
 from fastapi import HTTPException
 from common.config import COINMAKERCAP_TOKEN, JWT_SECRET, ALGORITHM

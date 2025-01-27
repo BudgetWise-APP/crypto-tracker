@@ -6,6 +6,7 @@ redis_client = redis.Redis(
     host=REDIS_HOST, port=6379, password=REDIS_PASSWORD, ssl=True
 )
 
+
 class CacheService:
     @staticmethod
     async def get_data_from_redis(redis_key: str):

@@ -16,7 +16,7 @@ class BybitService:
         data = await CacheService.get_data_from_redis(redis_key)
         if data:
             return data
-        
+
         bybit_credentials = await BybitService.get_bybit_data(user_id)
 
         if not bybit_credentials:
@@ -54,7 +54,9 @@ class BybitService:
             if total_wallet_balance:
                 total_wallet_balance = round(float(total_wallet_balance), 2)
 
-            await CacheService.set_data_to_redis(redis_key, total_wallet_balance, ttl=1200)
+            await CacheService.set_data_to_redis(
+                redis_key, total_wallet_balance, ttl=1200
+            )
             return total_wallet_balance
 
     @staticmethod

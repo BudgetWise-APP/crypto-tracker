@@ -6,14 +6,13 @@ import httpx
 from urllib.parse import urlencode
 from common.mongo_client import db
 from common.redis_service import CacheService
-from integrations.services.integration_service import IntegrationsService
 
 
 class BinanceService:
     BASE_URL = 'https://api.binance.com'
 
     @staticmethod
-    async def get_account_info(user_id: str) -> dict:        
+    async def get_account_info(user_id: str) -> dict:
         binance_credentials = await BinanceService.get_binance_data(user_id)
 
         if not binance_credentials:
@@ -42,7 +41,7 @@ class BinanceService:
         data = await CacheService.get_data_from_redis(redis_key)
         if data:
             return data
-        
+
         account_info = await BinanceService.get_account_info(user_id)
         prices = await BinanceService.get_prices()
 

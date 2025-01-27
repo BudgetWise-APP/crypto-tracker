@@ -1,5 +1,5 @@
 from confluent_kafka import Producer
-from common.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC
+from common.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC_CRYPTO
 import json
 import logging
 
@@ -17,11 +17,11 @@ def delivery_report(err, msg):
         logger.info(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
 
-def send_message(key, value):
+def send_message(key, value, topic):
     try:
         serialized_value = json.dumps(value)
         producer.produce(
-            KAFKA_TOPIC,
+            topic,
             key=json.dumps(key).encode('utf-8'),
             value=serialized_value.encode('utf-8'),
             callback=delivery_report,
