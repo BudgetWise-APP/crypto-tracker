@@ -38,15 +38,19 @@ async def consume_messages(topic: str):
                     print("Received message with empty user_id")
                     continue
                 try:
+                    print("Updating goals")
                     await update_goal(
                         user_id, "binance", BinanceService, "get_total_balance_in_usd"
                     )
                     await update_goal(
                         user_id, "bybit", BybitService, "get_account_info"
                     )
+
+                    print("Goals updated")
                 except Exception as e:
                     print(f"Error processing message: {e}")
         finally:
             await consumer.stop()
+            print("Kafka Consumer stopped")
     except Exception as e:
         print(f"Error consuming messages: {e}")

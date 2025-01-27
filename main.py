@@ -9,12 +9,14 @@ from common.config import KAFKA_TOPIC_INTEGRATIONS, ORIGINS
 
 
 async def start_kafka_consumer():
+    print ("Starting Kafka Consumer")
     asyncio.create_task(consume_messages(KAFKA_TOPIC_INTEGRATIONS))
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await start_kafka_consumer()
+    print("Application started")
     yield
 
 

@@ -53,8 +53,6 @@ async def delete_cryptocurrency(coin_id: int):
 async def get_cryptocurrencies_from_db(limit: int = 100):
     try:
         coins = await CryptoApiService.get_cryptocurrencies_from_db(limit)
-
-        send_message('user_coins', coins)
         return coins
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
