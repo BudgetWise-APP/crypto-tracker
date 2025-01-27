@@ -17,5 +17,5 @@ class CacheService:
 
     @staticmethod
     async def set_data_to_redis(redis_key: str, data: dict, ttl: int = 86400):
-        redis_client.set(redis_key, data, ex=ttl)
+        redis_client.set(redis_key, json.dumps(data), ex=ttl)
         print(f"Data cached in Redis with TTL: {ttl} seconds")

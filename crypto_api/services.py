@@ -34,7 +34,7 @@ class CryptoApiService:
         if data:
             return data
         data = await CryptoApiService.fetch_data_from_coinmaketcap(symbol, limit)
-        CacheService.set_data_to_redis(redis_key, json.dumps(data), ttl=3600)
+        await CacheService.set_data_to_redis(redis_key, data, ttl=3600)
         print(f"Data saved to Redis for key: {redis_key}")
         return data
 

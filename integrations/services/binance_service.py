@@ -39,7 +39,7 @@ class BinanceService:
                 headers=headers,
             )
             response.raise_for_status()
-            CacheService.set_data_to_redis(redis_key, response.json(), ttl=1200)
+            await CacheService.set_data_to_redis(redis_key, response.json(), ttl=1200)
             return response.json()
 
     @staticmethod
