@@ -1,4 +1,5 @@
 from aiokafka import AIOKafkaConsumer
+from bson import ObjectId
 from .config import KAFKA_BOOTSTRAP_SERVERS
 from common.mongo_client import db
 import json
@@ -8,7 +9,7 @@ from integrations.services.bybit_service import BybitService
 
 
 async def update_goal(user_id: str, platform: str, service, balance_method: str):
-    goal = await db.goals.find_one({"user_id": user_id, "trackBy": platform})
+    goal = await db.goals.find_one({"user_id": ObjectId(user_id), "trackBy": platform})
     if goal:
         print(f"Goal for {platform} platform: {goal.title}")
         try:
