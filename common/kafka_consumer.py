@@ -9,10 +9,8 @@ from integrations.services.bybit_service import BybitService
 
 
 async def update_goal(user_id: str, platform: str, service, balance_method: str):
-    print(f"Updating goal for {user_id} platform")
     goal = await db.goals.find_one({"user_id": ObjectId(user_id), "trackBy": platform})
     if goal:
-        print(f"Goal for {platform} platform: {goal.title}")
         try:
             balance = await getattr(service, balance_method)(user_id)
             print(f"Balance for {platform} platform: {balance}")
@@ -41,17 +39,6 @@ async def consume_messages(topic: str):
         try:
             async for msg in consumer:
                 user_id = msg.value.get("user_id")
-
-                print(f"Received user_id: {user_id}")
-
-                
-                if not user_id:
-                    print("Received message with empty user_id")
-                    continue
-
-                if not ObjectId.is_valid(user_id):
-                    print(f"Invalid user_id: {user_id}")
-                    continue
                 try:
                     print("Updating goals")
                     await update_goal(
