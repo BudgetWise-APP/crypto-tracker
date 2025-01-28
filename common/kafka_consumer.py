@@ -9,6 +9,7 @@ from integrations.services.bybit_service import BybitService
 
 
 async def update_goal(user_id: str, platform: str, service, balance_method: str):
+    print(f"Updating goal for {user_id} platform")
     goal = await db.goals.find_one({"user_id": ObjectId(user_id), "trackBy": platform})
     if goal:
         print(f"Goal for {platform} platform: {goal.title}")
@@ -32,6 +33,7 @@ async def consume_messages(topic: str):
             bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
             group_id="crypto_integrations_group",
             value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+            key_deserializer=lambda k: k.decode("utf-8") if k else None
         )
 
         await consumer.start()
