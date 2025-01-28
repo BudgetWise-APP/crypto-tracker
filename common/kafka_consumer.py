@@ -44,6 +44,10 @@ async def consume_messages(topic: str):
                 if not user_id:
                     print("Received message with empty user_id")
                     continue
+
+                if not ObjectId.is_valid(user_id):
+                    print(f"Invalid user_id: {user_id}")
+                    continue
                 try:
                     print("Updating goals")
                     await update_goal(
