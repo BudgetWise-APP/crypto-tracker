@@ -40,7 +40,11 @@ async def consume_messages(topic: str):
         print("Kafka Consumer started. Listening for messages...")
         try:
             async for msg in consumer:
-                user_id = msg.key
+                user_id = msg.value.get("user_id")
+
+                print(f"Received user_id: {user_id}")
+
+                
                 if not user_id:
                     print("Received message with empty user_id")
                     continue
