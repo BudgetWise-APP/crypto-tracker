@@ -9,9 +9,11 @@ from integrations.services.bybit_service import BybitService
 
 async def update_goal(user_id: str, platform: str, service, balance_method: str):
     goal = await db.goals.find_one({"user_id": user_id, "trackBy": platform})
+    print(f"Goal for {platform} platform: {goal._id}")
     if goal:
         try:
             balance = await getattr(service, balance_method)(user_id)
+            print(f"Balance for {platform} platform: {balance}")
             await db.goals.update_one(
                 {"_id": goal["_id"]}, {"$set": {"currentValue": balance}}
             )
