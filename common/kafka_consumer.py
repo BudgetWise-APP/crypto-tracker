@@ -13,11 +13,9 @@ async def update_goal(user_id: str, platform: str, service, balance_method: str)
     if goal:
         try:
             balance = await getattr(service, balance_method)(user_id)
-            print(f"Balance for {platform} platform: {balance}")
             await db.goals.update_one(
-                {"_id": goal["_id"]}, {"$set": {"currentValue": balance}}
+                {"_id": goal["_id"]}, {"$set": {"currentStatus": balance}}
             )
-            print(f"Record updated for {platform} platform")
         except Exception as e:
             print(f"Error updating {platform} goal for user {user_id}: {e}")
     else:
